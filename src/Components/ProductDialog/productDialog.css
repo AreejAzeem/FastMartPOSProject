@@ -1,0 +1,140 @@
+.productDialog{
+    width:100%;
+}
+.dialog_header{
+    border: 0 !important;
+}
+.MuiTypography-root{
+    border: 0px !important;
+}
+.productDialogWrapper{
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+}
+.productDialog_topContainer{
+width: 100%;
+display: flex;
+}
+.productDialog_topLeftContainer{
+width:50%;
+}
+.productDialog_topRightContainer{
+width: 50%;
+display: flex;
+flex-direction: column;
+}
+
+.productDialog_title{
+    
+color: black;
+}
+.productDialog_categoryDiv{
+    margin-top: -7%;
+
+}
+.productDialog_category{
+  
+color: var(--orangestandard);
+opacity: 70%;
+font-style: normal;
+font-size: medium;
+}
+.productDialog_priceDiv{
+    margin-top: -7%; 
+}
+.productDialog_stockDiv{
+    margin-top: -6%; 
+}
+.productDialog_stock{
+    font-weight: normal;
+    font-size: " 1rem";
+    opacity: 70%;
+    color:rgba(14,159,110) ;
+    padding: 1.5px;
+                    
+                    /* color: "rgba(14,159,110)",
+                    marginBottom: "0rem",
+                    padding: "1.5px", */
+}
+.productDialog_descDiv{
+    width:80%;
+    margin-top: -6%; 
+
+}
+.productDialog_desc{
+    font-size: 500;
+    font-style: normal;
+    color: var(--darkestgray);
+}
+.productDialog_middleContainer{
+width: 100%;
+}
+.productDialog_middle{
+
+  margin-left: 10%;
+  margin-right: 10%;
+    border: 0.5px solid var(--darkergray);
+}
+.productDialog_qtyDiv{
+    width: 100%;
+    text-align: center;
+    margin-top: 5%;
+}
+.productDialog_qtyHeader{
+font-size: large;
+font-style: bold;
+font-weight: 600;
+opacity: 80%;
+}
+.productDialog_qtyIconDiv{
+
+    display: flex;
+    width: 100%;
+    text-align: center;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+
+display: flex;
+flex-direction: row;
+
+vertical-align: middle;
+}
+.productDialog_qtyPlus{
+   
+    width: 6%;
+    height: 6%;
+    color: var(--orangestandard);
+    cursor: pointer;
+}
+.productDialog_qtyMinus{
+ 
+    width: 6%;
+    height: 6%;
+    cursor: pointer;
+    color:black;
+    opacity: 70%;
+
+  
+}
+.productDialog_qtyText{
+font-size: 1rem;
+height: 10px;
+margin-left: 5%;
+margin-right: 5%;
+}
+.productDialog_image{
+    width: 90%;
+    height: 90%;
+}
+.productDialog_buttonCart{
+    background-color: var(--orangestandard) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 7px !important;
+    font-size: 15px !important;
+    margin-right: 3% !important;
+    margin-bottom: 2% !important;
+    width:180px !important;
+}
