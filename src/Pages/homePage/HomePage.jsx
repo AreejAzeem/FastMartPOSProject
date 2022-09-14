@@ -9,9 +9,10 @@ import Button from "@mui/material/Button";
 import { BsCashStack } from "react-icons/bs";
 import { BsCreditCardFill } from "react-icons/bs";
 import ReceiptDialog from "../../Components/ReceiptDialog/ReceiptDialog.jsx";
-
+import axios from "axios"; 
+import config from "../../Config/config";
 function HomePage() {
-  const [length, setLength]=useState(10);
+ 
   const[active, setActive]=useState(false);
   const[cashActive , setCashActive]=useState(false);
   const[refresh, setRefresh]=useState(false);
@@ -19,38 +20,151 @@ function HomePage() {
   const [inputText, setInputText] = useState("");
   const [enter, setEnter] = useState(false);
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
+  
   const [product, setProduct] = useState({
-    productId: 1,
+    productBarcode: 1,
     productName: "Olpers",
-    categoryName: "Dairy",
+    category: "Dairy",
     productPrice: "230",
     stockStatus: "20",
   });
-  // let inputHandler = (e) => {
-  //   var lowerCase = e.target.value.toLowerCase();
-  //   console.log(" in line 8 " + lowerCase);
-  //   setInputText(lowerCase);
-  // };
+  const [cartProduct , setCartProduct]=useState([
+    {
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    } ,{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    },{
+      productId: 1,
+      productName: "Olpers",
+      category: "Dairy",
+      productPrice: "230",
+      stockStatus: "20",
+    }
+  ]);
+  const [length, setLength]=useState(cartProduct.length);
+  let inputHandler = (e) => {
+    var lowerCase = e.target.value;
+    console.log(" in line 8 " + lowerCase);
+    setInputText(lowerCase);
+  };
   useEffect(() => {
     console.log("88");
+    setEnter(false);
    
-  }, [refresh]);
-  const HandleEnterKey = (e) => {
+  }, [refresh,inputText]);
+  const getProduct=async()=>{
+   await axios.get(config.apiURL+`/products/product?productBarcode=${inputText}`)
+          .then((response) => {
+            console.log("in input after axios 132 "+inputText)
+            console.log("hiiiiiiiiiiiii")
+            console.table(response.data);
+           setProduct(response.data);
+          })
+          console.log("in search ")
+          // setProduct(pro);
+          console.log("in line 140 "+product.productName)
+  }
+ 
+  const HandleEnterKey =(e) => {
+
     if (e.key == "Enter") {
       setEnter(true);
-      setInputText(e.target.value);
+      // setInputText(e.target.value);
       setOpenReceiptDialog(false);
-    
       console.log("value is " + inputText);
-
+      console.log("enter value "+enter)
+        getProduct()
+      // const pro=  axios.get(config.apiURL+`/products/product?productBarcode=${inputText}`)
+      //     .then((response) => {
+      //       console.log("in input after axios 132 "+inputText)
+      //       console.log("hiiiiiiiiiiiii")
+      //       console.table(pro);
+      //       // setProduct(response.data);
+      //     })
+      //     console.log("in search ")
+      //     setProduct(pro);
+      //     console.log("in line 140 "+product.productName)
+         
       // alert(e.target.value+"key pressed");
     }
     return (
       <div>{        
-        inputText != "" ? <ProductDialog input={inputText} /> : null}</div>
+        inputText != "" && enter? <ProductDialog input={inputText}  product={product}/> : null}
+        {/* {setEnter(false)} */}
+        </div>
+        
     );
   };
   const HandleOrder = () => {
+   
     console.log("in order dialog   ");
    console.log("in line 52 "+openReceiptDialog);
    
@@ -76,8 +190,8 @@ function HomePage() {
               variant="outlined"
               label="Search"
               placeholder="Enter barcode / product name"
-              // onChange={inputHandler}
-              onChange={HandleEnterKey}
+            onChange={inputHandler}
+             
               size="medium"
               onKeyDown={HandleEnterKey}
             />
@@ -87,7 +201,10 @@ function HomePage() {
           maxWidth="500px"  />
           )
           :null} */}
-         {inputText!=='' ?  <HandleEnterKey />:null}
+         {inputText!=='' ?  (<HandleEnterKey />
+         )
+         :null}
+         
           </div>
         </div>
         <div className="homePage_bottomContain">
@@ -115,6 +232,12 @@ function HomePage() {
               </div>
             </div>
             <div className={length<=9 ?'':'homePage_bottomContain_productSection_productDiv_Scroll'}>
+              {cartProduct.map((cartProduct)=>{
+                 return <Product product={cartProduct}  />
+              })}
+               {/* <Product product={cartProduct[0]}/> */}
+              {/* <Product  setArrFunc={setCartProduct} />
+              
               <Product />
               <Product />
               <Product />
@@ -124,9 +247,7 @@ function HomePage() {
               <Product />
               <Product />
               <Product />
-              <Product />
-              <Product />
-              <Product />
+              <Product /> */}
             </div>
           </div>
           <div className="homePage_bottomContain_checkoutSection">

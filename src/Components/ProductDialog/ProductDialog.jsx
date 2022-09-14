@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
@@ -16,7 +16,8 @@ import "./productDialog.css";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
-
+import config from "../../Config/config";
+import axios from "axios";
 
 
 
@@ -62,15 +63,17 @@ BootstrapDialogTitle.propTypes = {
 export default function ProductDialog(props) {
   const [opens, setOpens] = React.useState(true);
   const [product, setProduct] = useState({
-    productId: 1,
+    productBarcode: 1,
+    productImg:'https://islamabad.olpersmart.pk/wp-content/uploads/2020/11/olpers-fcmp-800gm-1.jpg',
     productName: "Olpers",
-    categoryName: "Dairy",
+    category: "Dairy",
     productPrice: "230",
     stockStatus:
-      "20",
-      productDesc:"the full cream mil with pro biotic and less fat"
+      "IN",
+      productShortDesc:"the full cream mil with pro biotic and less fat"
    
   });
+  const [productQty, setProductQty]=useState(1);
 //   const [state, setState] = React.useState({
 //     open: true,
 //     vertical: 'top',
@@ -95,12 +98,44 @@ export default function ProductDialog(props) {
   //   const handleClickOpen = () => {
   //     setOpen(true);
   //   };
-
+  useEffect(() => {
+   
+      // let result = await fetch(config.apiURL+`/categories/category?categoryName=${searchInput}`);
+      // result = await result.json();
+      // console.log(result);
+      // setCategory(result["data"]);
+  //  await axios.get(config.apiURL+`/products/product?productBarcode=${props.input}`)
+  //     .then((response) => {
+  //       console.table(response.data);
+  //       setProduct(response.data);
+  //     })
+  //     console.log("in search ")
+    
+  //     console.table(product);
+   
+  }, []);
   const handleClose = () => {
     setOpens(false);
+    
   };
   const handleAddtoCart=()=>{
     setOpens(false);
+  }
+  const IncreProductQty=()=>{
+    if(productQty<5){
+    console.log("in qty incre"+productQty)
+    setProductQty((current)=>(current+1))
+    console.log("in110 incre"+productQty)}
+    else{
+      setProductQty(productQty);
+    }
+  }
+  const DecreProductQty=()=>{
+    if(productQty>1){
+    setProductQty((current)=>(current-1))}
+    else{
+      setProductQty(productQty);
+    }
   }
   
 
@@ -125,23 +160,23 @@ export default function ProductDialog(props) {
             <div className="productDialogWrapper">
               <div className="productDialog_topContainer"> 
               <div className="productDialog_topLeftContainer">
-                <img  className="productDialog_image" src='https://islamabad.olpersmart.pk/wp-content/uploads/2020/11/olpers-fcmp-800gm-1.jpg'/>
+                <img  className="productDialog_image" src={product.productImg}/>
               </div>
               <div className="produtDialog_topRightContainer">
               <div className="productDialog_titleDiv">
               <h2 className="productDialog_title">{props.input}</h2>
             </div>
             <div className="productDialog_categoryDiv">
-              <h5 className="productDialog_category">{product.categoryName}</h5>
+              <h5 className="productDialog_category">{product.category}</h5>
             </div>
             <div className="productDialog_priceDiv">
               <h3 className="productDialog_price">Rs. {product.productPrice}</h3>
             </div>
             <div className="productDialog_stockDiv">
-              <h3 className="productDialog_stock">In stock {product.stockStatus}</h3>
+              <h3 className="productDialog_stock">{product.stockStatus} Stock</h3>
             </div>
             <div className="productDialog_descDiv">
-              <h5 className="productDialog_desc">{product.productDesc}</h5>
+              <h5 className="productDialog_desc">{product.productShortDesc}</h5>
             </div>
               </div>
               </div>
@@ -152,9 +187,9 @@ export default function ProductDialog(props) {
                 <div className="productDialog_qtyDiv">
                   <div className="productDialog_qtyHeader">QTY</div>
                   <div className="productDialog_qtyIconDiv">
-                    <FiPlusCircle className="productDialog_qtyPlus"/>
-                    <h5 className="productDialog_qtyText">2</h5>
-                    <FiMinusCircle className="productDialog_qtyMinus"/>
+                    <FiPlusCircle className="productDialog_qtyPlus" onClick={IncreProductQty}/>
+                    <h5 className="productDialog_qtyText">{productQty}</h5>
+                    <FiMinusCircle className="productDialog_qtyMinus" onClick={DecreProductQty}/>
                   </div>
                 </div>
    

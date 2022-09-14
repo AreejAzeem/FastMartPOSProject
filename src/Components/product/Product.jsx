@@ -1,7 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import "./product.css";
 
-function Product() {
+function Product(props) {
+  const [product, setProduct] = useState(
+    // productId: 1,
+    // productImg:'https://islamabad.olpersmart.pk/wp-content/uploads/2020/11/olpers-fcmp-800gm-1.jpg',
+    // productName: "Olpers",
+    // category: "Dairy",
+    // productPrice: "230",
+    // stockStatus:
+    //   "IN",
+    //   productShortDesc:"the full cream mil with pro biotic and less fat"
+  props.product
+  );
   return (
     <div className="product">
       <div className="productWrapper">
@@ -13,19 +24,19 @@ function Product() {
                     />
           </div>
           <div className="product_barcodeDiv">
-            <h5 className="product_barcode">0209847839954</h5>
+            <h5 className="product_barcode">{product.productId}</h5>
           </div>
           <div className="product_productNameDiv">
-          <h5 className="product_productName">Lays</h5>
+          <h5 className="product_productName">{product.productName}</h5>
           </div>
           <div className="product_productCategoryDiv">
-          <h5 className="product_productCategory">Chips</h5>
+          <h5 className="product_productCategory">{product.category}</h5>
           </div>
           <div className="product_productPriceDiv">
-          <h5 className="product_productPrice">2000</h5>
+          <h5 className="product_productPrice">{product.productPrice}</h5>
           </div>
           <div className="product_productQtyDiv">
-          <h5 className="product_productQty">3</h5>
+          <h5 className="product_productQty">1</h5>
           </div>
         </div>
       </div>
