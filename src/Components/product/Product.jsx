@@ -24,7 +24,7 @@ function Product(props) {
                     />
           </div>
           <div className="product_barcodeDiv">
-            <h5 className="product_barcode">{product.productId}</h5>
+            <h5 className="product_barcode">{product.productBarcode}</h5>
           </div>
           <div className="product_productNameDiv">
           <h5 className="product_productName">{product.productName}</h5>
@@ -33,10 +33,10 @@ function Product(props) {
           <h5 className="product_productCategory">{product.category}</h5>
           </div>
           <div className="product_productPriceDiv">
-          <h5 className="product_productPrice">{product.productPrice}</h5>
+          <h5 className="product_productPrice">Rs.{product.productPrice}</h5>
           </div>
           <div className="product_productQtyDiv">
-          <h5 className="product_productQty">1</h5>
+          <h5 className="product_productQty">13</h5>
           </div>
         </div>
       </div>

@@ -16,132 +16,191 @@ function HomePage() {
   const[active, setActive]=useState(false);
   const[cashActive , setCashActive]=useState(false);
   const[refresh, setRefresh]=useState(false);
-  
+  const [proNameCart, setProNameCart] = useState("");
+  const[nextCartItem, setNextCartItem]=useState([])
   const [inputText, setInputText] = useState("");
   const [enter, setEnter] = useState(false);
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
   
-  const [product, setProduct] = useState({
-    productBarcode: 1,
-    productName: "Olpers",
-    category: "Dairy",
-    productPrice: "230",
-    stockStatus: "20",
-  });
+  const [product, setProduct] = useState(
+   );
   const [cartProduct , setCartProduct]=useState([
     {
-      productId: 1,
-      productName: "Olpers",
-      category: "Dairy",
-      productPrice: "230",
+      productBarcode: 16484303003889,
+      productName: "Olperssssssssss",
+      category: "gdhghhhhhhhhh",
+      productPrice: "23044",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     } ,{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     },{
-      productId: 1,
+      productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
+      productShortDescription: "Olpers",
     }
   ]);
   const [length, setLength]=useState(cartProduct.length);
   let inputHandler = (e) => {
+    setOpenReceiptDialog(false);
     var lowerCase = e.target.value;
     console.log(" in line 8 " + lowerCase);
     setInputText(lowerCase);
   };
   useEffect(() => {
     console.log("88");
+    // (async()=>{
+    // let result = await fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
+    //   console.log("in line 153");
+    //   result = await result.json();
+    //   console.table(result["data"]);
+    //   setCartProduct(...cartProduct,result['data']);
+    //   console.log("in line 157");
+    //   
+    // })();
+    if(proNameCart!=''){ 
+      getProduct();
+      console.log("in line 146 of home "+proNameCart) 
+    setProNameCart('');}
+  
     setEnter(false);
+ 
    
   }, [refresh,inputText]);
   const getProduct=async()=>{
-   await axios.get(config.apiURL+`/products/product?productBarcode=${inputText}`)
-          .then((response) => {
-            console.log("in input after axios 132 "+inputText)
-            console.log("hiiiiiiiiiiiii")
-            console.table(response.data);
-           setProduct(response.data);
-          })
+    let result = await fetch(config.apiURL+`/products/product?productName=${inputText} `);
+      console.log("in line 153");
+      result = await result.json();
+      console.log(result["data"]);
+      setProduct(result['data']);
+         
+           console.table(product);
+          
           console.log("in search ")
           // setProduct(pro);
-          console.log("in line 140 "+product.productName)
+       
   }
+  const getProductByName=()=>{   
+ (async()=>{
+    let result = await fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
+      console.log("in line 153");
+      result = await result.json();
+      console.table(result["data"]);
+      console.log("in line 157");
+      // setCartProduct(cartProduct=>[...cartProduct,result['data']]);
+
+    })();
+
+  }
+  // const CartRender=()=>{
+  //   if(proNameCart!=''){
+  //     let result = fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
+  //       console.log("in line 153");
+  //       result = result.json();
+  //       console.table(result["data"]);
+  //       console.log("in line 157");
+  //       // setCartProduct(cartProduct=>[...cartProduct,result['data']]);
+  
+  //     }
+  //     else{
+  //       setCartProduct(cartProduct);
+  //     }
+  //     return(
+  //       <div>
+  //          { cartProduct.map((cartProduct)=>{  
+  //             return <Product product={cartProduct}  />})}
+
+  //       </div>
+  //     )
+  // }
  
   const HandleEnterKey =(e) => {
-
     if (e.key == "Enter") {
       setEnter(true);
-      // setInputText(e.target.value);
+    // setInputText(e.target.value);
       setOpenReceiptDialog(false);
       console.log("value is " + inputText);
-      console.log("enter value "+enter)
-        getProduct()
+      console.log("enter value "+enter);
+      getProduct();
+        // getProduct();
       // const pro=  axios.get(config.apiURL+`/products/product?productBarcode=${inputText}`)
       //     .then((response) => {
       //       console.log("in input after axios 132 "+inputText)
@@ -154,20 +213,20 @@ function HomePage() {
       //     console.log("in line 140 "+product.productName)
          
       // alert(e.target.value+"key pressed");
+
+   
     }
     return (
       <div>{        
-        inputText != "" && enter? <ProductDialog input={inputText}  product={product}/> : null}
+        inputText != "" && enter? <ProductDialog input={inputText} setCart={setProNameCart} product={product} /> : null}
         {/* {setEnter(false)} */}
         </div>
         
     );
   };
   const HandleOrder = () => {
-   
     console.log("in order dialog   ");
    console.log("in line 52 "+openReceiptDialog);
-   
    console.log("in line 54 "+openReceiptDialog);
     return (
       <div>
@@ -201,7 +260,7 @@ function HomePage() {
           maxWidth="500px"  />
           )
           :null} */}
-         {inputText!=='' ?  (<HandleEnterKey />
+         {inputText!=='' ?  (<div><HandleEnterKey /></div>
          )
          :null}
          
@@ -232,12 +291,25 @@ function HomePage() {
               </div>
             </div>
             <div className={length<=9 ?'':'homePage_bottomContain_productSection_productDiv_Scroll'}>
-              {cartProduct.map((cartProduct)=>{
-                 return <Product product={cartProduct}  />
-              })}
+              {/* {(proNameCart!='')?(
+                console.log("in line 263 "+proNameCart),
+              getProductByName()
+  
+              ):(null)
+              // cartProduct.map((cartProduct)=>{
+              //    return <Product product={cartProduct}  />
+              // })
+            } */}
+            {/* {getProductByName()} */}
+
+        {/* <CartRender/> */}
+
+            {/* ////// */}
+           { cartProduct.map((cartProduct)=>{  
+              return <Product product={cartProduct}  />})}
+
                {/* <Product product={cartProduct[0]}/> */}
-              {/* <Product  setArrFunc={setCartProduct} />
-              
+              {/* <Product  setArrFunc={setCartProduct} /        
               <Product />
               <Product />
               <Product />
@@ -321,15 +393,14 @@ function HomePage() {
                   className="checkoutSection_pay"
                   variant="contained"
               
-                  onClick={() => {
-                  
+                  onClick={() => {  
                     console.log("in line 197 after click "+openReceiptDialog)
                     setInputText('');
                     setRefresh(!refresh);
                     setOpenReceiptDialog(true);
-                     HandleOrder()
-                    
-                  }}
+                    // return(<HandleOrder/>)
+                  }
+                }
                 >
                   Pay
                 </Button>

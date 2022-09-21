@@ -18,9 +18,6 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import { WifiLock } from "@mui/icons-material";
 
-
-
-
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -162,7 +159,6 @@ export default function ReceiptDialog() {
                   <ProductContainer/>
                 </div>
                 <div className="middleContain_line"></div>
-                
               </div>
               <div className="receiptDialog_bottomContain">
                 <div className="receiptDialog_subtotal">
