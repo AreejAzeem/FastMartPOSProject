@@ -10,25 +10,30 @@ margin-right: 1% !important; */
 }
 .productWrapper {
   width: 100%;
+
 }
 .product_contain {
   display: flex;
   vertical-align: middle !important;
 }
 .product_imageDiv {
-  width: 14%;
+  width: 10%;
   text-align: center;
+  height: fit-content;
 }
 .product_barcodeDiv {
   width: 24%;
   text-align: center;
+  height: fit-content;
 }
 .product_barcode {
   vertical-align: middle;
+
 }
 .product_productNameDiv {
   width: 19%;
   text-align: center;
+  height: fit-content;
 }
 .product_productCategoryDiv {
   width: 17%;
@@ -36,6 +41,7 @@ margin-right: 1% !important; */
   align-items: center;
   justify-content: center;
   display: flex;
+  height: fit-content;
 }
 .product_productCategory { 
   width: fit-content;
@@ -47,10 +53,12 @@ margin-right: 1% !important; */
   color: white;
   border-radius: 10px;
  margin-top: 8%;
+ height: fit-content;
 }
 .product_productPriceDiv {
   width: 12%;
   text-align: center;
+  height: fit-content;
 }
 .product_productQtyDiv {
   width: 10%;
@@ -60,4 +68,14 @@ h5 {
   font-size: small;
   font-weight: 400;
 
+}
+.product_productDeleteDiv{
+  width: 9%;
+  text-align: center;
+  vertical-align: middle !important;
+  margin-top: 1.3%;
+}
+.product_deleteIcon{
+  color:rgb(197, 27, 27);
+  cursor:pointer
 }

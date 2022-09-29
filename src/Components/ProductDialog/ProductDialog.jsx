@@ -18,9 +18,10 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import config from "../../Config/config";
 import axios from "axios";
-
-
-
+import {connect} from "react-redux";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import {addToCart} from  "../../redux/actions/cartActions"
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -60,11 +61,13 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function ProductDialog(props) {
+function ProductDialog({product,setProduct}) {
   const [opens, setOpens] = React.useState(true);
   //const[input, setInput]=useState(props.input);
   const[loading, setLoading]=useState(true);
-  const [product, setProduct] = useState(props.product
+  // const cartRedux=useSelector((state)=>state.shopReducer);
+
+  const [productt, setProductt] = useState(product
   //   {
   //     productId:'fhbfhfuhjj',
   //   productBarcode: "1122",
@@ -79,16 +82,21 @@ export default function ProductDialog(props) {
 
   // }
 );
-
+const dispatch=useDispatch();
   useEffect(() => {
     //setLoading(true);
     console.log("in use effect ")
+   
+    console.log("in product dialog line 90");
    console.log("in line 87");
    console.log(product);
 
-   if(props.product !== undefined){
-    setProduct(props.product);
-    console.log(product[0].productName);
+   
+
+   if(product !== undefined){
+    setProductt(product);
+   
+    console.log(productt.productName);
    setLoading (false);}
    
    
@@ -107,7 +115,9 @@ export default function ProductDialog(props) {
     
  
    }, []);
- 
+ const getCartRedux=()=>{
+
+ }
   const [productQty, setProductQty]=useState(1);
 //   const [state, setState] = React.useState({
 //     open: true,
@@ -153,16 +163,26 @@ export default function ProductDialog(props) {
      
 //       console.log("in line 157");
 // }
-  const handleClose = () => {
+  const addToCartt = () => {
+   
+    console.log("in aaddttt to cart "+productt.productBarcode)
+    dispatch(addToCart(productt.productBarcode,productQty));
    // props.setCart(product.productName);
   //  console.log("in line 121  "+product.productName);
     setOpens(false);
+    setProduct(null);
+   
+    
+    // return(
+    // <GetCartRedux/>);
+   
   // props.setCart(product);
    
 
   };
-  const handleAddtoCart=()=>{
+  const handleClose=()=>{
     setOpens(false);
+    setProduct(null);
   }
   const IncreProductQty=()=>{
     if(productQty<5){
@@ -188,12 +208,7 @@ export default function ProductDialog(props) {
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open dialog
       </Button> */}
-      {loading?
-      <div>
-     <div>loading</div>
-    </div>
-     :
-      
+    {!loading ?  
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -207,6 +222,7 @@ export default function ProductDialog(props) {
         </BootstrapDialogTitle>
         <DialogContent >
           <div className="productDialog">
+            
             <div className="productDialogWrapper">
               <div className="productDialog_topContainer">
               <div className="productDialog_topLeftContainer">
@@ -214,19 +230,19 @@ export default function ProductDialog(props) {
               </div>
               <div className="produtDialog_topRightContainer">
               <div className="productDialog_titleDiv">
-              <h2 className="productDialog_title">{product[0].productName}</h2>
+              <h2 className="productDialog_title">{productt.productName}</h2>
             </div>
             <div className="productDialog_categoryDiv">
-              <h5 className="productDialog_category">{product[0].category.categoryName}</h5>
+              <h5 className="productDialog_category">{productt.category.categoryName}</h5>
             </div>
             <div className="productDialog_priceDiv">
-              <h3 className="productDialog_price">Rs. {product[0].productPrice}</h3>
+              <h3 className="productDialog_price">Rs. {productt.productPrice}</h3>
             </div>
             <div className="productDialog_stockDiv">
-              <h3 className="productDialog_stock">{product[0].stockStatus} Stock</h3>
+              <h3 className="productDialog_stock">{productt.stockStatus>0 ? "IN STOCK": "OUT OF STOCK"}</h3>
             </div>
             <div className="productDialog_descDiv">
-              <h5 className="productDialog_desc">{product[0].productShortDesc}</h5>
+              <h5 className="productDialog_desc">{productt.productShortDesc}</h5>
             </div>
               </div>
               </div>
@@ -248,12 +264,31 @@ export default function ProductDialog(props) {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose} className="productDialog_buttonCart">
+          <Button autoFocus onClick={()=> {setOpens(false); 
+          addToCartt();
+            console.log("in add to cart  " +productt.productBarcode);
+            }} className="productDialog_buttonCart">
            Add to Cart
           </Button>
         </DialogActions>
-      </BootstrapDialog>}
+      </BootstrapDialog>
+    :<div>Loading...</div>  }
+   
     </div>
 
   );
 }
+// const mapDispatchToProps = (dispatch) => {
+//   return{
+//     addToCart:(id)=>dispatch(addToCart(id)),
+//   };
+// };
+export default ProductDialog;
+// const GetCartRedux=()=>{
+//   console.log("in get cart redux compo")
+//   const cartRedux=useSelector((state)=>state.shopReducer);
+//   console.log(cartRedux);
+//   return(
+//     <>{cartRedux[0].pId}</>
+//   )
+// }

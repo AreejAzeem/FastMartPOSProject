@@ -9,22 +9,24 @@ import Button from "@mui/material/Button";
 import { BsCashStack } from "react-icons/bs";
 import { BsCreditCardFill } from "react-icons/bs";
 import ReceiptDialog from "../../Components/ReceiptDialog/ReceiptDialog.jsx";
-import axios from "axios"; 
+import axios from "axios";
 import config from "../../Config/config";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromCart } from "../../redux/actions/cartActions";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 function HomePage() {
- 
-  const[active, setActive]=useState(false);
-  const[cashActive , setCashActive]=useState(false);
-  const[refresh, setRefresh]=useState(false);
-  const [proNameCart, setProNameCart] = useState("");
-  const[nextCartItem, setNextCartItem]=useState([])
+  const [active, setActive] = useState(false);
+  const [cashActive, setCashActive] = useState(false);
+
   const [inputText, setInputText] = useState("");
   const [enter, setEnter] = useState(false);
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
-  
-  const [product, setProduct] = useState(
-   );
-  const [cartProduct , setCartProduct]=useState([
+
+  // const [cartRedux, setCartRedux]=useState([]);
+  const [product, setProduct] = useState();
+ const [cartRedux, setCartRedux]=useState([]);
+  const [cartProduct, setCartProduct] = useState([
     {
       productBarcode: 16484303003889,
       productName: "Olperssssssssss",
@@ -32,205 +34,199 @@ function HomePage() {
       productPrice: "23044",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    } ,{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    },{
+    },
+    {
       productBarcode: 1,
       productName: "Olpers",
       category: "Dairy",
       productPrice: "230",
       stockStatus: "20",
       productShortDescription: "Olpers",
-    }
+    },
   ]);
-  const [length, setLength]=useState(cartProduct.length);
-  let inputHandler = (e) => {
-    setOpenReceiptDialog(false);
-    var lowerCase = e.target.value;
-    console.log(" in line 8 " + lowerCase);
-    setInputText(lowerCase);
-  };
+  const [length, setLength] = useState(cartProduct.length);
+
   useEffect(() => {
     console.log("88");
-    // (async()=>{
-    // let result = await fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
-    //   console.log("in line 153");
-    //   result = await result.json();
-    //   console.table(result["data"]);
-    //   setCartProduct(...cartProduct,result['data']);
-    //   console.log("in line 157");
-    //   
-    // })();
-    if(proNameCart!=''){ 
-      getProduct();
-      console.log("in line 146 of home "+proNameCart) 
-    setProNameCart('');}
-  
-    setEnter(false);
- 
+    console.log(product);
    
-  }, [refresh,inputText]);
-  const getProduct=async()=>{
-    let result = await fetch(config.apiURL+`/products/product?productName=${inputText} `);
-      console.log("in line 153");
-      result = await result.json();
-      console.log(result["data"]);
-      setProduct(result['data']);
-         
-           console.table(product);
-          
-          console.log("in search ")
-          // setProduct(pro);
-       
-  }
-  const getProductByName=()=>{   
- (async()=>{
-    let result = await fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
-      console.log("in line 153");
-      result = await result.json();
-      console.table(result["data"]);
-      console.log("in line 157");
-      // setCartProduct(cartProduct=>[...cartProduct,result['data']]);
-
-    })();
-
-  }
-  // const CartRender=()=>{
-  //   if(proNameCart!=''){
-  //     let result = fetch(config.apiURL+`/products/product?productName=${proNameCart}`);
-  //       console.log("in line 153");
-  //       result = result.json();
-  //       console.table(result["data"]);
-  //       console.log("in line 157");
-  //       // setCartProduct(cartProduct=>[...cartProduct,result['data']]);
-  
-  //     }
-  //     else{
-  //       setCartProduct(cartProduct);
-  //     }
-  //     return(
-  //       <div>
-  //          { cartProduct.map((cartProduct)=>{  
-  //             return <Product product={cartProduct}  />})}
-
-  //       </div>
-  //     )
-  // }
- 
-  const HandleEnterKey =(e) => {
-    if (e.key == "Enter") {
+    if (product) {
       setEnter(true);
-    // setInputText(e.target.value);
-      setOpenReceiptDialog(false);
-      console.log("value is " + inputText);
-      console.log("enter value "+enter);
-      getProduct();
-        // getProduct();
-      // const pro=  axios.get(config.apiURL+`/products/product?productBarcode=${inputText}`)
-      //     .then((response) => {
-      //       console.log("in input after axios 132 "+inputText)
-      //       console.log("hiiiiiiiiiiiii")
-      //       console.table(pro);
-      //       // setProduct(response.data);
-      //     })
-      //     console.log("in search ")
-      //     setProduct(pro);
-      //     console.log("in line 140 "+product.productName)
-         
-      // alert(e.target.value+"key pressed");
-
-   
+      HandleSearch();
+  
+    
     }
+  }, [product,setCartRedux]);
+  const getProduct = async () => {
+    console.log("in line 162 " + inputText);
+    let result1 = await fetch(
+      config.apiURL + `/products/productByBarcode?productBarcode=${inputText} `
+    );
+
+    console.log("in line 153");
+    var result = await result1.json();
+
+    //setProduct(result["data"][0]);
+
+    console.log("in search ");
+    if (result["data"] != undefined) {
+      console.log(result["data"]);
+      setProduct(result["data"]);
+      console.log("Last" + product);
+      console.log("in line 174" + enter);
+    }
+    // setProduct(pro);
+  };
+
+  const HandleSearch = () => {
+    console.log("value of enter in line 158" + enter);
+    console.log(`In line 159 ${product}`);
+
     return (
-      <div>{        
-        inputText != "" && enter? <ProductDialog input={inputText} setCart={setProNameCart} product={product} /> : null}
-        {/* {setEnter(false)} */}
-        </div>
-        
+      <div>
+        {product != null ? (
+          <ProductDialog product={product} setProduct={setProduct}/>
+          
+        ) : (
+          <div>Product not found</div>
+        )}
+       
+      </div>
     );
   };
   const HandleOrder = () => {
     console.log("in order dialog   ");
-   console.log("in line 52 "+openReceiptDialog);
-   console.log("in line 54 "+openReceiptDialog);
+    console.log("in line 52 " + openReceiptDialog);
+    console.log("in line 54 " + openReceiptDialog);
+    useEffect(() => {});
     return (
       <div>
-        {openReceiptDialog ? <ReceiptDialog  className="receipt_dialog_component"/> : null}    
+        {openReceiptDialog ? (
+          <ReceiptDialog className="receipt_dialog_component" />
+        ) : null}
+      </div>
+    );
+  };
+  const CartComponent = ({setCartRedux}) => {
+    const dispatch = useDispatch();
+    const cart = useSelector((state) => state.cart);
+    const { cartItems } = cart;
+   
+    useEffect(() => {
+      console.log("in cart compooo");
+
+      setCartRedux(cartItems);
+      console.log("in line 203");
+      console.log(cartItems);
+      console.table(cartItems);
+      console.log(cartItems[0]);
+    }, [cart,dispatch]);
+    const removeHandler=(id)=>{
+      dispatch(removeFromCart(id))
+    }
+  
+    return (
+      <div>
+        {cartItems.length === 0 ? (
+          <div>Cart is empty</div>
+        ) : (
+          console.log("Line 205: "+ cartItems.length),
+          cartItems.map((cartProduct) => {
+            console.log("in line 210 of homepage")
+            console.log(cartProduct.qty);
+            return <Product product={cartProduct} removeHandler={removeHandler} />;
+          })
+        )}
+        {/* {cartProduct.map((cartProduct)=>{  
+              return <Product product={cartProduct}  />})} */}
       </div>
     );
   };
@@ -249,23 +245,31 @@ function HomePage() {
               variant="outlined"
               label="Search"
               placeholder="Enter barcode / product name"
-            onChange={inputHandler}
-             
+              onChange={(e) => {
+                setOpenReceiptDialog(false);
+                setProduct(null);
+                setInputText(e.target.value);
+              }}
               size="medium"
-              onKeyDown={HandleEnterKey}
             />
-            {/* {inputText!=='' && enter?(
 
-          <ProductDialog 
-          maxWidth="500px"  />
-          )
-          :null} */}
-         {inputText!=='' ?  (<div><HandleEnterKey /></div>
-         )
-         :null}
-         
+            <Button
+              onClick={() => {
+                setOpenReceiptDialog(false);
+                getProduct();
+                //setEnter(true);
+              }}
+            >
+              {" "}
+              Search
+            </Button>
+            {product ? <HandleSearch /> : null}
+          
+
           </div>
         </div>
+
+        {console.log("in bottom renderig")}
         <div className="homePage_bottomContain">
           <div className="homePage_bottomContain_productSection">
             <div className="homePage_bottomContain_productSection_headerDiv">
@@ -290,36 +294,14 @@ function HomePage() {
                 </div>
               </div>
             </div>
-            <div className={length<=9 ?'':'homePage_bottomContain_productSection_productDiv_Scroll'}>
-              {/* {(proNameCart!='')?(
-                console.log("in line 263 "+proNameCart),
-              getProductByName()
-  
-              ):(null)
-              // cartProduct.map((cartProduct)=>{
-              //    return <Product product={cartProduct}  />
-              // })
-            } */}
-            {/* {getProductByName()} */}
-
-        {/* <CartRender/> */}
-
-            {/* ////// */}
-           { cartProduct.map((cartProduct)=>{  
-              return <Product product={cartProduct}  />})}
-
-               {/* <Product product={cartProduct[0]}/> */}
-              {/* <Product  setArrFunc={setCartProduct} /        
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product />
-              <Product /> */}
+            <div
+              className={
+                length <= 9
+                  ? ""
+                  : "homePage_bottomContain_productSection_productDiv_Scroll"
+              }
+            >
+         <CartComponent setCartRedux={setCartRedux}/>
             </div>
           </div>
           <div className="homePage_bottomContain_checkoutSection">
@@ -365,20 +347,37 @@ function HomePage() {
                   Payment Method
                 </div>
                 <div className="checkoutSection_paymentMethod_iconContain">
-                  <div className={active ? "checkoutSection_paymentMethod_creditCard active" :"checkoutSection_paymentMethod_creditCard" }onClick={()=>{setActive(current=>!current)
-                    console.log("in line 179 ")
-                    setInputText('');
-                    setCashActive(false)
-                    setOpenReceiptDialog(false)}}>
+                  <div
+                    className={
+                      active
+                        ? "checkoutSection_paymentMethod_creditCard active"
+                        : "checkoutSection_paymentMethod_creditCard"
+                    }
+                    onClick={() => {
+                      setActive((current) => !current);
+                      console.log("in line 179 ");
+                      setCashActive(false);
+                      setOpenReceiptDialog(false);
+                      setProduct("");
+                    }}
+                  >
                     <BsCreditCardFill className="checkoutSection_paymentMethod_icon" />
                     <h5 className="checkoutSection_paymentMethod_text">
                       Credit Card
                     </h5>
                   </div>
-                  <div className= {cashActive ? "checkoutSection_paymentMethod_cash cashActive":"checkoutSection_paymentMethod_cash"} onClick={()=>{setCashActive(current=>!current)
-                    setActive(false)
-                    setInputText('');
-                    setOpenReceiptDialog(false)}}>
+                  <div
+                    className={
+                      cashActive
+                        ? "checkoutSection_paymentMethod_cash cashActive"
+                        : "checkoutSection_paymentMethod_cash"
+                    }
+                    onClick={() => {
+                      setCashActive((current) => !current);
+                      setActive(false);
+                      setOpenReceiptDialog(false);
+                    }}
+                  >
                     <BsCashStack className="checkoutSection_paymentMethod_icon" />
                     <h5 className="checkoutSection_paymentMethod_text">Cash</h5>
                   </div>
@@ -392,31 +391,24 @@ function HomePage() {
                 <Button
                   className="checkoutSection_pay"
                   variant="contained"
-              
-                  onClick={() => {  
-                    console.log("in line 197 after click "+openReceiptDialog)
-                    setInputText('');
-                    setRefresh(!refresh);
+                  onClick={() => {
+                    console.log("in line 197 after click " + openReceiptDialog);
+
                     setOpenReceiptDialog(true);
                     // return(<HandleOrder/>)
-                  }
-                }
+                  }}
                 >
                   Pay
                 </Button>
-               {console.log("in handle order renderig")}
-               { openReceiptDialog? <HandleOrder />:null}
-              
+                {console.log("in handle order renderig")}
+                {openReceiptDialog ? <HandleOrder /> : null}
+                {/* <GetCartRedux setCartRedux={setCartRedux}/> */}
               </div>
             </div>
           </div>
-     
-
         </div>
       </div>
-    
     </div>
-    
   );
 }
 
