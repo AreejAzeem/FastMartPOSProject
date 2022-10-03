@@ -6,5 +6,13 @@ const reducer=combineReducers({
 cart:cartReducer,
 });
 const middleware=[thunk];
-const store=legacy_createStore(reducer,composeWithDevTools(applyMiddleware(...middleware)));
+const cartFromLocalStorage=localStorage.getItem("cart")? 
+JSON.parse(localStorage.getItem("cart")):[]
+const INITIAL_STATE={
+    cart:{
+        cartItems:cartFromLocalStorage
+    }
+}
+const store=legacy_createStore(reducer,INITIAL_STATE,
+     composeWithDevTools(applyMiddleware(...middleware)));
 export default store;

@@ -35,6 +35,13 @@ text-align: center; */
   width: 40%;
   height: 5px;
 }
+.search_icon{
+  color:var(--orangestandard);
+  padding:15px;
+  width:60px;
+  height: 60px;
+  cursor: pointer;
+}
 .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
   border-radius: 17px !important;
 }
@@ -49,7 +56,7 @@ text-align: center; */
 .homePage_bottomContain_productSection_headerDiv {
 }
 .homePage_bottomContain_productSection_productDiv_Scroll {
-  height: 311px;
+  /* height: 311px; */
   overflow-y: scroll;
   /* box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
     0 2px 4px rgba(0,0,0,0.07), 
@@ -101,6 +108,22 @@ text-align: center; */
   font-weight: 700;
   opacity: 60%;
 }
+.homePage_bottomContain_productSection_clearAll{
+  font-size: 15px;
+  font-weight: 500;
+  font-style: bold;
+  color: var(--orangestandard) !important;
+  cursor: pointer;
+  width: 100%;
+  justify-content:flex-end;
+  align-items: flex-end;
+  text-align: right;
+  opacity: 0.7;
+}
+.homePage_bottomContain_productSection_clearAll:hover{
+ 
+  opacity: 2;
+}
 .homePage_bottomContain_checkoutSection {
   width: 26%;
   margin-left: 0.5%;
@@ -133,12 +156,13 @@ text-align: center; */
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+justify-content: space-evenly;
 }
 .checkoutSection_subtotalHeader {
-  width: 60%;
+  width: 55%;
 }
 .checkoutSection_subtotalNumber {
+  width: 25%;
 }
 .rupees {
   font-weight: 800;
@@ -151,7 +175,25 @@ text-align: center; */
   margin-right: 6%;
   border: 0.1px solid var(--darkgray);
 }
+.checkoutSection_totalItemsDiv{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 
+}
+.checkoutSection_totalItems{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-left: -1%;
+}
+.checkoutSection_totalItemsHeader{
+  width: 60%;
+}
+.checkoutSection_totalItemsNumber{
+
+}
 .checkoutSection_taxDiv {
   display: flex;
   flex-direction: column;
@@ -185,16 +227,39 @@ text-align: center; */
 }
 .checkoutSection_grandtotalNumber {
 }
+.checkoutSection_customerDiv{
+  text-align: center !important;
+  justify-content: space-around;
+  align-items: center !important;
+  align-content: space-around;
+ display: flex !important;
+ margin-top: 3%;
+
+}
+.checkoutSection_textField{
+ width: 83%;
+
+}
+.css-1x51dt5-MuiInputBase-input-MuiInput-input:focus {
+  border-color: var(--orangestandard) !important;
+
+
+
+}
+
 .checkoutSection_paymentMethodDiv {
+  margin-top: -2%;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 .checkoutSection_paymentMethodHeader {
-  margin: 4%;
+  margin: 2%;
+  text-align: center;
+  
 }
 .checkoutSection_paymentMethod_iconContain {
-  margin-top: 3%;
+  margin-top: 2%;
   width: 100%;
   display: flex;
   text-align: center;

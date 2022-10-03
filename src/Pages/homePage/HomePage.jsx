@@ -15,8 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../../redux/actions/cartActions";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
+import InputAdornment from "@mui/material/InputAdornment";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Moment from 'moment';
+
+
 function HomePage() {
-  const [active, setActive] = useState(false);
+  const [creditActive, setCreditActive] = useState(false);
   const [cashActive, setCashActive] = useState(false);
 
   const [inputText, setInputText] = useState("");
@@ -25,7 +32,9 @@ function HomePage() {
 
   // const [cartRedux, setCartRedux]=useState([]);
   const [product, setProduct] = useState();
- const [cartRedux, setCartRedux]=useState([]);
+  const [cartRedux, setCartRedux] = useState([]);
+  const [orderUser, setOrderUser] = useState();
+  const [orderProducts, setOrderProducts] = useState();
   const [cartProduct, setCartProduct] = useState([
     {
       productBarcode: 16484303003889,
@@ -132,19 +141,19 @@ function HomePage() {
       productShortDescription: "Olpers",
     },
   ]);
+  const dispatch = useDispatch();
   const [length, setLength] = useState(cartProduct.length);
-
+  const cart = useSelector((state) => state.cart);
+  const { cartItems } = cart;
   useEffect(() => {
     console.log("88");
     console.log(product);
-   
+
     if (product) {
       setEnter(true);
       HandleSearch();
-  
-    
     }
-  }, [product,setCartRedux]);
+  }, [product, setCartRedux]);
   const getProduct = async () => {
     console.log("in line 162 " + inputText);
     let result1 = await fetch(
@@ -173,12 +182,10 @@ function HomePage() {
     return (
       <div>
         {product != null ? (
-          <ProductDialog product={product} setProduct={setProduct}/>
-          
+          <ProductDialog product={product} setProduct={setProduct} />
         ) : (
           <div>Product not found</div>
         )}
-       
       </div>
     );
   };
@@ -195,11 +202,35 @@ function HomePage() {
       </div>
     );
   };
-  const CartComponent = ({setCartRedux}) => {
+  const getCartCount = () => {
+    return cartItems.reduce((qty, item) => Number(item.qty) + qty, 0);
+  };
+  const getCartSubtotal = () => {
+    return cartItems.reduce((price, item) => item.price * item.qty + price, 0);
+  };
+  const getCartGrandtotal = () => {
+    const totalwithTax = cartItems.reduce(
+      (price, item) => item.price * item.qty + price,
+      0
+    );
+    return totalwithTax + 50;
+  };
+  const clearAllCart = () => {
+    console.log("in clear all ");
+    console.log(localStorage.getItem("cart"));
+    localStorage.setItem("cart", JSON.stringify([]));
+    console.log(localStorage.getItem("cart"));
+    cartRedux.map((cartItem) => {
+      dispatch(removeFromCart(cartItem));
+    });
+    setCartRedux([]);
+  };
+  const CartComponent = ({ setCartRedux }) => {
     const dispatch = useDispatch();
+   let orderString="";
     const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
-   
+
     useEffect(() => {
       console.log("in cart compooo");
 
@@ -208,28 +239,91 @@ function HomePage() {
       console.log(cartItems);
       console.table(cartItems);
       console.log(cartItems[0]);
-    }, [cart,dispatch]);
-    const removeHandler=(id)=>{
-      dispatch(removeFromCart(id))
-    }
-  
+    }, [cart, dispatch]);
+
+    const removeHandler = (id) => {
+      dispatch(removeFromCart(id));
+    };
+
     return (
       <div>
         {cartItems.length === 0 ? (
           <div>Cart is empty</div>
         ) : (
-          console.log("Line 205: "+ cartItems.length),
+          (console.log("Line 205: " + cartItems.length),
           cartItems.map((cartProduct) => {
-            console.log("in line 210 of homepage")
+            console.log("in line 210 of homepage");
             console.log(cartProduct.qty);
-            return <Product product={cartProduct} removeHandler={removeHandler} />;
-          })
+            // {for(var i=0; i<cartProduct.qty;i++){
+            //   orderString+=cartProduct.productName+" ";
+            // }}
+            orderString += cartProduct.productId+ ":";
+            setOrderProducts(orderString)
+          
+          // setOrderProducts((orderProducts) => [
+          //   ...orderProducts,
+          //   {
+
+          //   }
+          // ]);
+
+            return (
+              <Product
+                key={cartProduct.productBarcode}
+                product={cartProduct}
+                removeHandler={removeHandler}
+              />
+            );
+          }))
         )}
         {/* {cartProduct.map((cartProduct)=>{  
               return <Product product={cartProduct}  />})} */}
       </div>
     );
   };
+  const handleUserChange=(event)=>{
+ setOrderUser(event.target.value);
+ console.log("in line 269"+orderUser);
+
+  }
+  const createOrder = async() => {
+    console.log("in line 272"+orderUser);
+    // const formData = new FormData();
+    // formData.append("orderProducts", orderProducts);
+    // formData.append("orderNo", "12377744");
+  
+    // formData.append("paymentMethod", creditActive ? "Credit" : "Cash");
+    // formData.append("orderDate", Date.now());
+    // formData.append("quantity", getCartCount());
+    // formData.append("total", getCartGrandtotal());
+    // axios({
+    //   method: "post",
+    //   url: config.apiURL + "/orders/order/",
+    //   data: formData,
+    //   headers: { "Content-Type": "multipart/form-data" },
+    // })
+    //   .then(function (response) {
+    //     //handle success
+    //     console.log(response);
+    //   })
+    //   .catch(function (response) {
+    //     //handle error
+    //     console.log(response);
+    //   });
+  let result=await axios.post(config.apiURL + "/orders/order/",{
+    orderProducts:orderProducts,
+    orderNo:"12300007444",
+    paymentMethod:creditActive ? "Credit" : "Cash",
+    orderDate:Moment().format('DD-MM-YYYY'),
+    quantity:getCartCount(),
+    total:getCartGrandtotal(),
+
+  }
+   
+  );
+  console.log(result['message']);
+}
+ 
   return (
     <div className="homePage_container">
       <div className="homePage_containerWrapper">
@@ -252,8 +346,16 @@ function HomePage() {
               }}
               size="medium"
             />
-
-            <Button
+            <SearchIcon
+              className="search_icon"
+              size="large"
+              onClick={() => {
+                setOpenReceiptDialog(false);
+                getProduct();
+                //setEnter(true);
+              }}
+            />
+            {/* <Button
               onClick={() => {
                 setOpenReceiptDialog(false);
                 getProduct();
@@ -262,10 +364,8 @@ function HomePage() {
             >
               {" "}
               Search
-            </Button>
+            </Button> */}
             {product ? <HandleSearch /> : null}
-          
-
           </div>
         </div>
 
@@ -292,16 +392,28 @@ function HomePage() {
                 <div className="homePage_bottomContain_productSection_productQty">
                   Quantity
                 </div>
+                {/* <div className="homePage_bottomContain_productSection_clearAll">
+                {/* <DeleteIcon className="product_deleteIcon" /> */}
+                {/* <div className=".homePage_bottomContain_productSection_clearAll"> CLEAR</div>
+                </div> */}
               </div>
             </div>
-            <div
-              className={
-                length <= 9
-                  ? ""
-                  : "homePage_bottomContain_productSection_productDiv_Scroll"
-              }
-            >
-         <CartComponent setCartRedux={setCartRedux}/>
+            <div>
+              <div
+                className={
+                  length <= 9
+                    ? ""
+                    : "homePage_bottomContain_productSection_productDiv_Scroll"
+                }
+              >
+                <CartComponent setCartRedux={setCartRedux} />
+              </div>
+              <div
+                onClick={clearAllCart}
+                className="homePage_bottomContain_productSection_clearAll"
+              >
+                CLEAR ALL
+              </div>
             </div>
           </div>
           <div className="homePage_bottomContain_checkoutSection">
@@ -315,7 +427,21 @@ function HomePage() {
                     <h5 className="subtotal">Subtotal</h5>
                   </div>
                   <div className="checkoutSection_subtotalNumber">
-                    <h5 className="rupees">Rs. 200</h5>
+                    <h5 className="rupees">
+                      Rs. {getCartSubtotal().toFixed(2)}
+                    </h5>
+                  </div>
+                </div>
+
+                <div className="checkoutSection_line"></div>
+              </div>
+              <div className="checkoutSection_totalItemsDiv">
+                <div className="checkoutSection_totalItems">
+                  <div className="checkoutSection_totalItemsHeader">
+                    <h5 className="subtotal">Total Items</h5>
+                  </div>
+                  <div className="checkoutSection_totalItemsNumber">
+                    <h5 className="rupees">{getCartCount()}</h5>
                   </div>
                 </div>
                 <div className="checkoutSection_line"></div>
@@ -337,10 +463,33 @@ function HomePage() {
                     <h5 className="grandtotal">Grand Total</h5>
                   </div>
                   <div className="checkoutSection_grandtotalNumber">
-                    <h5 className="rupees">Rs. 200</h5>
+                    <h5 className="rupees">Rs. {getCartGrandtotal()}</h5>
                   </div>
                 </div>
                 <div className="checkoutSection_line"></div>
+              </div>
+              <div className="checkoutSection_customerDiv">
+                <div className="checkoutSection_textField">
+                <TextField
+                  helperText={orderUser!="" ? " ":"Required"}
+                  id="input-with-icon-textfield"
+                  label="Customer Name"
+                  color="success"
+                  fullWidth
+                  onChange={handleUserChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle  style={
+                          {
+                            color:orderUser!="" ? "grey":"red"
+                          }
+                        }/>
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="standard"
+                /></div>
               </div>
               <div className="checkoutSection_paymentMethodDiv">
                 <div className="checkoutSection_paymentMethodHeader">
@@ -349,12 +498,12 @@ function HomePage() {
                 <div className="checkoutSection_paymentMethod_iconContain">
                   <div
                     className={
-                      active
+                      creditActive
                         ? "checkoutSection_paymentMethod_creditCard active"
                         : "checkoutSection_paymentMethod_creditCard"
                     }
                     onClick={() => {
-                      setActive((current) => !current);
+                      setCreditActive((current) => !current);
                       console.log("in line 179 ");
                       setCashActive(false);
                       setOpenReceiptDialog(false);
@@ -374,7 +523,7 @@ function HomePage() {
                     }
                     onClick={() => {
                       setCashActive((current) => !current);
-                      setActive(false);
+                      setCreditActive(false);
                       setOpenReceiptDialog(false);
                     }}
                   >
@@ -393,7 +542,7 @@ function HomePage() {
                   variant="contained"
                   onClick={() => {
                     console.log("in line 197 after click " + openReceiptDialog);
-
+                    createOrder();
                     setOpenReceiptDialog(true);
                     // return(<HandleOrder/>)
                   }}
