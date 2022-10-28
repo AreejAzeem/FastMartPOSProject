@@ -22,6 +22,9 @@ import {connect} from "react-redux";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {addToCart} from  "../../redux/actions/cartActions"
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -62,6 +65,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 function ProductDialog({product,setProduct}) {
+  var url=config.apiURL;
   const [opens, setOpens] = React.useState(true);
   //const[input, setInput]=useState(props.input);
   const[loading, setLoading]=useState(true);
@@ -167,10 +171,14 @@ const dispatch=useDispatch();
    
     console.log("in aaddttt to cart "+productt.productBarcode)
     dispatch(addToCart(productt.productBarcode,productQty));
+
    // props.setCart(product.productName);
   //  console.log("in line 121  "+product.productName);
     setOpens(false);
     setProduct(null);
+   
+
+
    
     
     // return(
@@ -222,11 +230,11 @@ const dispatch=useDispatch();
         </BootstrapDialogTitle>
         <DialogContent >
           <div className="productDialog">
-            
+         
             <div className="productDialogWrapper">
               <div className="productDialog_topContainer">
               <div className="productDialog_topLeftContainer">
-                <img  className="productDialog_image" src="https://islamabad.olpersmart.pk/wp-content/uploads/2020/11/olpers-fcmp-800gm-1.jpg"/>
+                <img  className="productDialog_image" src={url+productt.productImg}/>
               </div>
               <div className="produtDialog_topRightContainer">
               <div className="productDialog_titleDiv">
@@ -258,7 +266,7 @@ const dispatch=useDispatch();
                     <FiMinusCircle className="productDialog_qtyMinus" onClick={DecreProductQty}/>
                   </div>
                 </div>
-
+             
               </div>
             </div>
           </div>

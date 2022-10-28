@@ -21,6 +21,7 @@ function Product(props) {
     //   productShortDesc:"the full cream mil with pro biotic and less fat"
  props.product
   );
+  var url=config.apiURL;
   const dispatch=useDispatch();
   const getProductByBarcode=async(barcode)=>{
     let result = await fetch(config.apiURL+`/products/product?productBarcode=${barcode} `);
@@ -39,7 +40,7 @@ function Product(props) {
         <div className="product_contain">
           <div className="product_imageDiv">
           <img style={{ width: "40px", borderRadius: "5px", height:'43px' ,marginTop:'5%'}}
-                      src="https://pngset.com/images/lays-chips-french-cheese-70-gm-lays-yogurt-and-herb-food-snack-ketchup-mayonnaise-transparent-png-1155585.png"
+                      src={url + product.image}
                       alt=""
                     />
           </div>

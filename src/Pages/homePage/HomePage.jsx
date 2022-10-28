@@ -19,13 +19,17 @@ import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Moment from 'moment';
+import Moment from "moment";
 
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function HomePage() {
+  
+
   const [creditActive, setCreditActive] = useState(false);
   const [cashActive, setCashActive] = useState(false);
-
   const [inputText, setInputText] = useState("");
   const [enter, setEnter] = useState(false);
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
@@ -35,6 +39,7 @@ function HomePage() {
   const [cartRedux, setCartRedux] = useState([]);
   const [orderUser, setOrderUser] = useState();
   const [orderProducts, setOrderProducts] = useState();
+  const [receiptOrderNo, setReceiptOrderNo] = useState("");
   const [cartProduct, setCartProduct] = useState([
     {
       productBarcode: 16484303003889,
@@ -142,6 +147,7 @@ function HomePage() {
     },
   ]);
   const dispatch = useDispatch();
+  const [paymentIntent, setPaymentIntent] = useState();
   const [length, setLength] = useState(cartProduct.length);
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
@@ -167,9 +173,10 @@ function HomePage() {
 
     console.log("in search ");
     if (result["data"] != undefined) {
-      console.log(result["data"]);
-      setProduct(result["data"]);
-      console.log("Last" + product);
+      console.log(result["data"][0]);
+      setProduct(result["data"][0]);
+      console.log("Last");
+      console.log(product);
       console.log("in line 174" + enter);
     }
     // setProduct(pro);
@@ -181,7 +188,7 @@ function HomePage() {
 
     return (
       <div>
-        {product != null ? (
+        {product !== null ? (
           <ProductDialog product={product} setProduct={setProduct} />
         ) : (
           <div>Product not found</div>
@@ -189,15 +196,32 @@ function HomePage() {
       </div>
     );
   };
+  // const HandleCreditCard = () => {
+  //   console.log("in handle credit card 193 " + creditActive);
+
+  //   return (
+  //     <Elements stripe={stripePromise}>
+  //       <CreditCardForm setCreditActive={setCreditActive}></CreditCardForm>
+  //     </Elements>
+  //   );
+  // };
   const HandleOrder = () => {
+
     console.log("in order dialog   ");
     console.log("in line 52 " + openReceiptDialog);
     console.log("in line 54 " + openReceiptDialog);
-    useEffect(() => {});
+    console.log("in line 221 ");
+    useEffect(() => {
+      console.log("in line 226");
+    });
     return (
       <div>
         {openReceiptDialog ? (
-          <ReceiptDialog className="receipt_dialog_component" />
+          <ReceiptDialog
+            className="receipt_dialog_component"
+            receiptOrderNo={receiptOrderNo}
+            setOpenReceiptDialog={setOpenReceiptDialog}
+          />
         ) : null}
       </div>
     );
@@ -220,14 +244,16 @@ function HomePage() {
     console.log(localStorage.getItem("cart"));
     localStorage.setItem("cart", JSON.stringify([]));
     console.log(localStorage.getItem("cart"));
+
     cartRedux.map((cartItem) => {
       dispatch(removeFromCart(cartItem));
     });
     setCartRedux([]);
+    setOpenReceiptDialog(false);
   };
   const CartComponent = ({ setCartRedux }) => {
     const dispatch = useDispatch();
-   let orderString="";
+    let orderString = "";
     const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
 
@@ -254,18 +280,22 @@ function HomePage() {
           cartItems.map((cartProduct) => {
             console.log("in line 210 of homepage");
             console.log(cartProduct.qty);
-            // {for(var i=0; i<cartProduct.qty;i++){
-            //   orderString+=cartProduct.productName+" ";
-            // }}
-            orderString += cartProduct.productId+ ":";
-            setOrderProducts(orderString)
-          
-          // setOrderProducts((orderProducts) => [
-          //   ...orderProducts,
-          //   {
+            {
+              for (var i = 0; i < cartProduct.qty; i++) {
+                orderString += cartProduct.productId + ":";
+                console.log("in line 259 ");
+                console.log(orderString);
+              }
+              console.log(orderProducts);
+              setOrderProducts(orderString);
+            }
 
-          //   }
-          // ]);
+            // setOrderProducts((orderProducts) => [
+            //   ...orderProducts,
+            //   {
+
+            //   }
+            // ]);
 
             return (
               <Product
@@ -274,24 +304,24 @@ function HomePage() {
                 removeHandler={removeHandler}
               />
             );
-          }))
+          })
+          )
         )}
         {/* {cartProduct.map((cartProduct)=>{  
               return <Product product={cartProduct}  />})} */}
       </div>
     );
   };
-  const handleUserChange=(event)=>{
- setOrderUser(event.target.value);
- console.log("in line 269"+orderUser);
-
-  }
+  const handleUserChange = (event) => {
+    setOrderUser(event.target.value);
+    console.log("in line 269" + orderUser);
+  };
   const createOrder = async() => {
-    console.log("in line 272"+orderUser);
+    console.log("in line 272" + orderUser);
     // const formData = new FormData();
     // formData.append("orderProducts", orderProducts);
     // formData.append("orderNo", "12377744");
-  
+
     // formData.append("paymentMethod", creditActive ? "Credit" : "Cash");
     // formData.append("orderDate", Date.now());
     // formData.append("quantity", getCartCount());
@@ -310,20 +340,34 @@ function HomePage() {
     //     //handle error
     //     console.log(response);
     //   });
-  let result=await axios.post(config.apiURL + "/orders/order/",{
-    orderProducts:orderProducts,
-    orderNo:"12300007444",
-    paymentMethod:creditActive ? "Credit" : "Cash",
-    orderDate:Moment().format('DD-MM-YYYY'),
-    quantity:getCartCount(),
-    total:getCartGrandtotal(),
-
-  }
+    let result = await axios.post(config.apiURL + "/orders/posOrder", {
+      orderProducts: orderProducts,
+      orderNo: (Math.round(
+        Math.random() * (1000000000000 - 99999999999) + 99999999999
+      )),
+      paymentMethod: creditActive ? "Credit" : "Cash",
+      orderDate: Moment().format("DD-MM-YYYY"),
+      quantity: getCartCount(),
+      total: getCartGrandtotal(),
+    });
+    console.log("in create order");
    
-  );
-  console.log(result['message']);
-}
- 
+    if(result['data']['data']){
+    console.log(result["data"]["data"].orderNo);
+    var orderNo= result["data"]["data"].orderNo;
+    setReceiptOrderNo(orderNo)
+  }
+    // if (result["data"]["data"].orderId === orderId) {
+    //   console.log("line 335");
+    //   //setReceiptOrderId("");
+    //   console.log(receiptOrderId);
+    //   console.log(orderId);
+    //   setReceiptOrderId(orderId);
+    //   console.log(result["data"]["data"].orderId);
+    //   console.log(receiptOrderId);
+    // }
+  };
+
   return (
     <div className="homePage_container">
       <div className="homePage_containerWrapper">
@@ -408,6 +452,7 @@ function HomePage() {
               >
                 <CartComponent setCartRedux={setCartRedux} />
               </div>
+
               <div
                 onClick={clearAllCart}
                 className="homePage_bottomContain_productSection_clearAll"
@@ -468,29 +513,30 @@ function HomePage() {
                 </div>
                 <div className="checkoutSection_line"></div>
               </div>
-              <div className="checkoutSection_customerDiv">
+              {/* <div className="checkoutSection_customerDiv">
                 <div className="checkoutSection_textField">
-                <TextField
-                  helperText={orderUser!="" ? " ":"Required"}
-                  id="input-with-icon-textfield"
-                  label="Customer Name"
-                  color="success"
-                  fullWidth
-                  onChange={handleUserChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle  style={
-                          {
-                            color:orderUser!="" ? "grey":"red"
-                          }
-                        }/>
-                      </InputAdornment>
-                    ),
-                  }}
-                  variant="standard"
-                /></div>
-              </div>
+                  <TextField
+                    helperText={orderUser != "" ? " " : "Required"}
+                    id="input-with-icon-textfield"
+                    label="Customer Name"
+                    color="success"
+                    fullWidth
+                    onChange={handleUserChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle
+                            style={{
+                              color: orderUser != "" ? "grey" : "red",
+                            }}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                    variant="standard"
+                  />
+                </div>
+              </div> */}
               <div className="checkoutSection_paymentMethodDiv">
                 <div className="checkoutSection_paymentMethodHeader">
                   Payment Method
@@ -504,7 +550,7 @@ function HomePage() {
                     }
                     onClick={() => {
                       setCreditActive((current) => !current);
-                      console.log("in line 179 ");
+                      console.log("in line 179 " + creditActive);
                       setCashActive(false);
                       setOpenReceiptDialog(false);
                       setProduct("");
@@ -515,6 +561,7 @@ function HomePage() {
                       Credit Card
                     </h5>
                   </div>
+                  {/* {creditActive ? <HandleCreditCard /> : null} */}
                   <div
                     className={
                       cashActive
@@ -550,7 +597,11 @@ function HomePage() {
                   Pay
                 </Button>
                 {console.log("in handle order renderig")}
-                {openReceiptDialog ? <HandleOrder /> : null}
+                {openReceiptDialog ? (
+                 
+                    <HandleOrder />
+               
+                ) : null}
                 {/* <GetCartRedux setCartRedux={setCartRedux}/> */}
               </div>
             </div>

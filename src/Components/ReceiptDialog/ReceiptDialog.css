@@ -71,26 +71,31 @@ flex-direction: row;
 justify-content: space-around;
 margin-left: 10%;
     margin-right: 9%;
+    text-align: center;
 }
 .productContainer_productName{
     font-size: 14px;
     color: black;
     opacity: 70%;
+    width:20%;
 }
 .productConatiner_productQty{
     font-size: 14px;
     color: black;
     opacity: 70%;
+    width:10%;
 }
 .productConatiner_productPrice{
     font-size: 14px;
     color: black;
     opacity: 70%;
+    width:20%;
 }
 .productConatiner_productTotal{
     font-size: 14px;
     color: black;
     opacity: 70%;
+    width:20%;
 }
 .middleContain_productContainer_scroll{
     height:67px;

@@ -7,7 +7,8 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
   );
   console.log("in line 8 of cart actions");
   console.log(result);
-  const data = result["data"]["data"];
+  console.log(result['data'].data[0])
+  const data = result['data'].data[0];
   console.log(data.productBarcode);
   dispatch({
     type: actionTypes.ADD_TO_CART,

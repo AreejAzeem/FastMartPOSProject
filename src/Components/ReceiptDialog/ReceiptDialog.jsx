@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
@@ -17,6 +17,9 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import { WifiLock } from "@mui/icons-material";
+import axios from "axios";
+import config from "../../Config/config";
+import {useSelector} from "react-redux";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -57,59 +60,120 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function ReceiptDialog() {
+export default function ReceiptDialog(props) {
   const [opens, setOpens] = React.useState(true);
   const[length, setLength]=useState(5);
-  const [order, setOrder] = useState({
-    orderId: 1,
-    orderName: "Olpers",
-    categoryName: "Dairy",
-    productPrice: "230",
-    stockStatus:
-      "20",
-      productDesc:"the full cream mil with pro biotic and less fat"
-   
-  });
-//   const [state, setState] = React.useState({
-//     open: true,
-//     vertical: 'top',
-//     horizontal: 'center',
-//   });
 
-//   const { vertical, horizontal, open } = state;
-// const SuccessBar=()=>{
+  var orderData='';
+  const [order, setOrder] = useState();
+  const cart = useSelector((state) => state.cart);
+  const { cartItems } = cart;
+  useEffect(()=>{
+    
+    console.log("in use EFFECT of receipt")
+console.log(props.receiptOrderNo);
+console.log(cartItems)
+ 
+  },[]);
+  const getCartSubtotal = () => {
+    return cartItems.reduce((price, item) => item.price * item.qty + price, 0);
+  };
+  const getCartGrandtotal = () => {
+    const totalwithTax = cartItems.reduce(
+      (price, item) => item.price * item.qty + price,
+      0
+    );
+    return totalwithTax + 50;
+  };
+const getOrderData=async(orderNo)=>{
+  console.log(orderNo);
+  await axios.get(config.apiURL+`/orders/order?orderNo=${orderNo}`).then (res=>{
+    console.log(res.data.data[0]);
+    orderData=res.data.data[0];
+    // setOrder((order=>({...order, ...res.data.data[0]})));
+    console.log(orderData);
+    
+    // var orderProducts=res.data.data[0].orderProducts;
+    // console.log(orderProducts);
+    // orderProducts.map( async(product )=>{
+          
+    //       let response= await axios.get(config.apiURL + `/products/productByBarcode?productBarcode=${product.productBarcode} `);
+    //       console.log(response['data']['data'][0]);
 
-//   return(
-// <Snackbar
-//   anchorOrigin={{ vertical, horizontal }}
-//   open={open}
+    //     })
+
   
-  
-//   key={vertical + horizontal}
-// >
-// <Alert severity="success">This is a success message!</Alert>
-// </Snackbar>
-//   )
+  }).catch(err=>{
+    console.log(err);
+  }
+
+  ) 
+
+
+//   console.log(result['data']['data'][0]);
+//   if(result['data']['data'][0]!==undefined){
+//   setOrder(result['data']['data'][0]);
+//   console.log(order);
+//   var orderProducts=order['orderProducts']
+//   orderProducts.map( async(product )=>{
+//     let response= await axios.get(config.apiURL + `/products/productByBarcode?productBarcode=${product.productBarcode} `);
+//     console.log(response);
+//   })
 // }
-  //   const handleClickOpen = () => {
-  //     setOpen(true);
-  //   };
+ 
+cartItems.map((cartProduct) => {
+  console.log("in line 210 of homepage");
+  console.log(cartProduct.qty);
+  {
+   
+  }
 
+  // setOrderProducts((orderProducts) => [
+  //   ...orderProducts,
+  //   {
+
+  //   }
+  // ]);
+
+ 
+})
+
+}
+const GetOrderDat=()=>{
+console.log(cartItems);
+  return( 
+    <div>
+  { cartItems.map((cartProduct) => {
+      console.log(cartProduct);
+    <div className="productContainer">
+    <div className="productContainer_wrapper">
+      <div className="productContainer_productName">{cartProduct.productId}</div>
+      <div className="productConatiner_productQty">2</div>
+      <div className="productConatiner_productPrice">Rs. 200</div>
+      <div className="productConatiner_productTotal">Rs.400</div>
+    </div>
+  </div>
+    })}
+    </div>
+  )
+
+    
+  
+}
   const handleClose = () => {
     setOpens(false);
+    props.setOpenReceiptDialog(false);
   };
-  const handleAddtoCart=()=>{
-    setOpens(false);
-  }
-  const ProductContainer=()=>{
-    
+ 
+  const ProductContainer=(product)=>{
+product=product['product'];
     return(
       <div className="productContainer">
         <div className="productContainer_wrapper">
-          <div className="productContainer_productName">Olpers</div>
-          <div className="productConatiner_productQty">2</div>
-          <div className="productConatiner_productPrice">Rs. 200</div>
-          <div className="productConatiner_productTotal">Rs.400</div>
+          <div className="productContainer_productName">{product.name}</div>
+          <div className="productConatiner_productQty">{product.qty}</div>
+          <div className="productConatiner_productPrice">{product.price}</div>
+          <div className="productConatiner_productTotal">{product.price*product.qty}</div>
         </div>
       </div>
     );
@@ -151,29 +215,30 @@ export default function ReceiptDialog() {
                 </div>
                 <div className="middleContain_line"></div>
                 <div className={length>=5?"middleContain_productContainer_scroll":"middleContain_productContainer"}>
-                  <ProductContainer/>
-                  <ProductContainer/>
-                  <ProductContainer/>
-                  <ProductContainer/>
-                  <ProductContainer/>
-                  <ProductContainer/>
+              {console.log("in receeipt renders")}
+               { cartItems ? cartItems.map((cartProduct)=>{
+              console.log(cartProduct);
+              return(
+                  <ProductContainer product={cartProduct}/>)
+            }):null }
+            {/* <ProductContainer/> */}
                 </div>
                 <div className="middleContain_line"></div>
               </div>
               <div className="receiptDialog_bottomContain">
                 <div className="receiptDialog_subtotal">
                   <div className="receiptDialog_subtotalText">Subtotal</div>
-                  <div className="receiptDialog_subtotalNumber"> Rs. 3000</div>
+                  <div className="receiptDialog_subtotalNumber"> {getCartSubtotal()}</div>
                 </div>
                 <div className="middleContain_line"></div>
-                <div className="receiptDialog_subtotal">
+                {/* <div className="receiptDialog_subtotal">
                   <div className="receiptDialog_subtotalText">Discount</div>
                   <div className="receiptDialog_subtotalNumber"> 300</div>
-                </div>
+                </div> */}
                 <div className="middleContain_line"></div>
                 <div className="receiptDialog_subtotal">
                   <div className="receiptDialog_subtotalText">Grand Total</div>
-                  <div className="receiptDialog_subtotalNumber">Rs. 3300</div>
+                  <div className="receiptDialog_subtotalNumber">{getCartGrandtotal()}</div>
                 </div>
                 <div className="middleContain_line"></div>
 
