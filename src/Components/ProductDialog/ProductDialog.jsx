@@ -99,9 +99,14 @@ const dispatch=useDispatch();
 
    if(product !== undefined){
     setProductt(product);
-   
+    console.log(url+productt.productImg)
     console.log(productt.productName);
-   setLoading (false);}
+   setLoading (false);
+  }
+  else{
+    setLoading(true);
+    alert("No product Found")
+  }
    
    
  //  setCart(product);
@@ -173,7 +178,7 @@ const dispatch=useDispatch();
     dispatch(addToCart(productt.productBarcode,productQty));
 
    // props.setCart(product.productName);
-  //  console.log("in line 121  "+product.productName);
+   console.log("in line 121  "+product.productName);
     setOpens(false);
     setProduct(null);
    
@@ -247,7 +252,7 @@ const dispatch=useDispatch();
               <h3 className="productDialog_price">Rs. {productt.productPrice}</h3>
             </div>
             <div className="productDialog_stockDiv">
-              <h3 className="productDialog_stock">{productt.stockStatus>0 ? "IN STOCK": "OUT OF STOCK"}</h3>
+              <h3 className="productDialog_stock">{productt.stockStatus}</h3>
             </div>
             <div className="productDialog_descDiv">
               <h5 className="productDialog_desc">{productt.productShortDesc}</h5>

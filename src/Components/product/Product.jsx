@@ -7,7 +7,7 @@ import { removeFromCart } from "../../redux/actions/cartActions";
 
 function Product(props) {
   useEffect(() => {
-    console.log("in line 7  of Product"+props.product.productBarcode);
+    console.log("in line 7  of Product"+props.product.productBarcode+props.index);
 //  getProductByBarcode(cart.pId);
   })
   const [product, setProduct] = useState(
@@ -38,6 +38,13 @@ function Product(props) {
     <div className="product">
       <div className="productWrapper">
         <div className="product_contain">
+          <div style={{
+            marginTop:"17px",
+            marginLeft:"10px",
+            width:"5%",
+            
+
+          }}>{props.index}</div>
           <div className="product_imageDiv">
           <img style={{ width: "40px", borderRadius: "5px", height:'43px' ,marginTop:'5%'}}
                       src={url + product.image}

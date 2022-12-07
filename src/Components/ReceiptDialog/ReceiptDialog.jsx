@@ -16,10 +16,11 @@ import "./ReceiptDialog.css";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
-import { WifiLock } from "@mui/icons-material";
+import { ClearAll, WifiLock } from "@mui/icons-material";
 import axios from "axios";
 import config from "../../Config/config";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import { removeFromCart } from "../../redux/actions/cartActions";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -68,6 +69,7 @@ export default function ReceiptDialog(props) {
   const [order, setOrder] = useState();
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+  const dispatch=useDispatch();
   useEffect(()=>{
     
     console.log("in use EFFECT of receipt")
@@ -83,7 +85,7 @@ console.log(cartItems)
       (price, item) => item.price * item.qty + price,
       0
     );
-    return totalwithTax + 50;
+    return totalwithTax - ((7/100)*getCartSubtotal());
   };
 const getOrderData=async(orderNo)=>{
   console.log(orderNo);
@@ -163,6 +165,8 @@ console.log(cartItems);
   const handleClose = () => {
     setOpens(false);
     props.setOpenReceiptDialog(false);
+    
+    
   };
  
   const ProductContainer=(product)=>{
@@ -180,7 +184,7 @@ product=product['product'];
   }
 
   return (
-    <div style={{width:'30px !important'}} >
+    <div style={{width:'500px !important'}} >
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open dialog
       </Button> */}
@@ -190,6 +194,7 @@ product=product['product'];
         open={opens}
         fullWidth
         maxWidth="sm"
+        
       >
         {/* <BootstrapDialogTitle
           id="customized-dialog-title"
@@ -203,7 +208,7 @@ product=product['product'];
               <div className="receiptDialog_topContain">
                 <div className="receiptDialog_top_header">Receipt</div>
                 <div className="receiptDialog_top_date">{new Date().toLocaleString()}</div>
-                <div className="receiptDialog_top_orderNo">jhh45fbu4495gf0850bfh8bffhjnej789 </div>
+                <div className="receiptDialog_top_orderNo">{props.receiptOrderNo} </div>
               </div>
               <div className="receiptDialog_middleContain">
                 <div className="middleContain_line"></div>
@@ -248,7 +253,7 @@ product=product['product'];
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose} className="printReceipt">
-           Print Receipt
+          Continue
           </Button>
         </DialogActions>
       </BootstrapDialog>

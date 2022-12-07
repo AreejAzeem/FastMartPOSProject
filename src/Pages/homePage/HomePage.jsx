@@ -6,7 +6,7 @@ import FastMart from "../../Components/Animations/FastMart.jsx";
 import Cart from "../../Components/Animations/Cart";
 import ProductDialog from "../../Components/ProductDialog/ProductDialog";
 import Button from "@mui/material/Button";
-import { BsCashStack } from "react-icons/bs";
+import { BsCashStack, BsCartX } from "react-icons/bs";
 import { BsCreditCardFill } from "react-icons/bs";
 import ReceiptDialog from "../../Components/ReceiptDialog/ReceiptDialog.jsx";
 import axios from "axios";
@@ -20,14 +20,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Moment from "moment";
-
-
+import ReceiptCashDialog from "../../Components/ReceiptCashDialog/ReceiptCashDialog";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function HomePage() {
-  
+import { addToCart } from "../../redux/actions/cartActions";
 
+function HomePage() {
   const [creditActive, setCreditActive] = useState(false);
   const [cashActive, setCashActive] = useState(false);
   const [inputText, setInputText] = useState("");
@@ -40,6 +39,9 @@ function HomePage() {
   const [orderUser, setOrderUser] = useState();
   const [orderProducts, setOrderProducts] = useState();
   const [receiptOrderNo, setReceiptOrderNo] = useState("");
+  const [receiptOrderCashDialog, setReceiptOrderCashDialog] = useState(false);
+  const [cashOrderNo, setCashOrderNo] = useState("");
+  const [searchClicked, setSearchclicked] = useState(false);
   const [cartProduct, setCartProduct] = useState([
     {
       productBarcode: 16484303003889,
@@ -148,8 +150,9 @@ function HomePage() {
   ]);
   const dispatch = useDispatch();
   const [paymentIntent, setPaymentIntent] = useState();
-  const [length, setLength] = useState(cartProduct.length);
   const cart = useSelector((state) => state.cart);
+  const [length, setLength] = useState(cart.length);
+
   const { cartItems } = cart;
   useEffect(() => {
     console.log("88");
@@ -175,6 +178,7 @@ function HomePage() {
     if (result["data"] != undefined) {
       console.log(result["data"][0]);
       setProduct(result["data"][0]);
+
       console.log("Last");
       console.log(product);
       console.log("in line 174" + enter);
@@ -185,14 +189,14 @@ function HomePage() {
   const HandleSearch = () => {
     console.log("value of enter in line 158" + enter);
     console.log(`In line 159 ${product}`);
+    setSearchclicked(false);
+    const click = true;
 
     return (
       <div>
-        {product !== null ? (
+        {product ?
           <ProductDialog product={product} setProduct={setProduct} />
-        ) : (
-          <div>Product not found</div>
-        )}
+        : null}
       </div>
     );
   };
@@ -206,7 +210,6 @@ function HomePage() {
   //   );
   // };
   const HandleOrder = () => {
-
     console.log("in order dialog   ");
     console.log("in line 52 " + openReceiptDialog);
     console.log("in line 54 " + openReceiptDialog);
@@ -226,6 +229,21 @@ function HomePage() {
       </div>
     );
   };
+  const HandleOrderCash = () => {
+    console.log("in order cash dialog   " + cashOrderNo);
+    return (
+      <div>
+        {receiptOrderCashDialog ? (
+          <ReceiptCashDialog
+            className="receipt_dialog_component"
+            cashOrderNo={cashOrderNo}
+            setOpenReceiptDialog={setReceiptOrderCashDialog}
+          />
+        ) : null}
+      </div>
+    );
+  };
+
   const getCartCount = () => {
     return cartItems.reduce((qty, item) => Number(item.qty) + qty, 0);
   };
@@ -237,13 +255,14 @@ function HomePage() {
       (price, item) => item.price * item.qty + price,
       0
     );
-    return totalwithTax + 50;
+    return totalwithTax - (7 / 100) * getCartSubtotal();
   };
   const clearAllCart = () => {
     console.log("in clear all ");
     console.log(localStorage.getItem("cart"));
     localStorage.setItem("cart", JSON.stringify([]));
     console.log(localStorage.getItem("cart"));
+    setOrderProducts([]);
 
     cartRedux.map((cartItem) => {
       dispatch(removeFromCart(cartItem));
@@ -274,10 +293,31 @@ function HomePage() {
     return (
       <div>
         {cartItems.length === 0 ? (
-          <div>Cart is empty</div>
+          <div
+            style={{
+              marginLeft: "400px",
+              marginTop: "20px",
+            }}
+          >
+            <BsCartX
+              style={{
+                width: "100px",
+                height: "100px",
+                color: "orange",
+              }}
+            />
+            <h5
+              style={{
+                fontWeight: "400",
+                fontStyle: "bold",
+              }}
+            >
+              Cart is empty
+            </h5>
+          </div>
         ) : (
           (console.log("Line 205: " + cartItems.length),
-          cartItems.map((cartProduct) => {
+          cartItems.map((cartProduct,index) => {
             console.log("in line 210 of homepage");
             console.log(cartProduct.qty);
             {
@@ -299,13 +339,13 @@ function HomePage() {
 
             return (
               <Product
+              index={index+1}
                 key={cartProduct.productBarcode}
                 product={cartProduct}
                 removeHandler={removeHandler}
               />
             );
-          })
-          )
+          }))
         )}
         {/* {cartProduct.map((cartProduct)=>{  
               return <Product product={cartProduct}  />})} */}
@@ -316,47 +356,46 @@ function HomePage() {
     setOrderUser(event.target.value);
     console.log("in line 269" + orderUser);
   };
-  const createOrder = async() => {
+  const createOrder = async () => {
     console.log("in line 272" + orderUser);
-    // const formData = new FormData();
-    // formData.append("orderProducts", orderProducts);
-    // formData.append("orderNo", "12377744");
 
-    // formData.append("paymentMethod", creditActive ? "Credit" : "Cash");
-    // formData.append("orderDate", Date.now());
-    // formData.append("quantity", getCartCount());
-    // formData.append("total", getCartGrandtotal());
-    // axios({
-    //   method: "post",
-    //   url: config.apiURL + "/orders/order/",
-    //   data: formData,
-    //   headers: { "Content-Type": "multipart/form-data" },
-    // })
-    //   .then(function (response) {
-    //     //handle success
-    //     console.log(response);
-    //   })
-    //   .catch(function (response) {
-    //     //handle error
-    //     console.log(response);
-    //   });
-    let result = await axios.post(config.apiURL + "/orders/posOrder", {
-      orderProducts: orderProducts,
-      orderNo: (Math.round(
-        Math.random() * (1000000000000 - 99999999999) + 99999999999
-      )),
-      paymentMethod: creditActive ? "Credit" : "Cash",
-      orderDate: Moment().format("DD-MM-YYYY"),
-      quantity: getCartCount(),
-      total: getCartGrandtotal(),
-    });
-    console.log("in create order");
-   
-    if(result['data']['data']){
-    console.log(result["data"]["data"].orderNo);
-    var orderNo= result["data"]["data"].orderNo;
-    setReceiptOrderNo(orderNo)
-  }
+    console.log(orderProducts);
+    if (orderProducts.length > 0) {
+      let result = await axios
+        .post(config.apiURL + "/orders/posOrder", {
+          orderProducts: orderProducts,
+          orderNo: Math.round(
+            Math.random() * (1000000000000 - 99999999999) + 99999999999
+          ),
+          paymentMethod: creditActive ? "Credit" : "Cash",
+          orderDate: Moment().format("DD-MM-YYYY"),
+          quantity: getCartCount(),
+          total: getCartGrandtotal(),
+        })
+        .then((response) => {
+          console.log(response);
+          console.log(response.data.data);
+          setReceiptOrderNo(response.data.data.orderNo);
+          console.log(receiptOrderNo);
+          setOpenReceiptDialog(true);
+          if (openReceiptDialog) {
+            console.log("in line 358" + openReceiptDialog);
+            clearAllCart();
+          }
+        });
+    } else {
+      console.log("in line 364");
+      setOpenReceiptDialog(false);
+      alert("Please add items to cart");
+      setOpenReceiptDialog(false);
+    }
+    // console.log("in create order");
+
+    // if(result['data']['data']){
+    // console.log(result["data"]["data"].orderNo);
+    // var orderNo= result["data"]["data"].orderNo;
+    // setReceiptOrderNo(orderNo)
+    //}
     // if (result["data"]["data"].orderId === orderId) {
     //   console.log("line 335");
     //   //setReceiptOrderId("");
@@ -381,7 +420,8 @@ function HomePage() {
               className="search_input"
               id="outlined-basic"
               variant="outlined"
-              label="Search"
+              value={inputText}
+              label="Enter barcode / product name"
               placeholder="Enter barcode / product name"
               onChange={(e) => {
                 setOpenReceiptDialog(false);
@@ -389,6 +429,13 @@ function HomePage() {
                 setInputText(e.target.value);
               }}
               size="medium"
+              onKeyDown={(event) => {
+                if (event.key == "Enter") {
+                  console.log("Test");
+                  dispatch(addToCart(inputText, 1));
+                  setInputText("");
+                }
+              }}
             />
             <SearchIcon
               className="search_icon"
@@ -399,6 +446,7 @@ function HomePage() {
                 //setEnter(true);
               }}
             />
+
             {/* <Button
               onClick={() => {
                 setOpenReceiptDialog(false);
@@ -411,6 +459,34 @@ function HomePage() {
             </Button> */}
             {product ? <HandleSearch /> : null}
           </div>
+          <div
+            style={{
+              display: "flex",
+              width: "20%",
+              marginLeft: "7%",
+            }}
+          >
+            <TextField
+              className="search_input_order"
+              id="outlined-basic"
+              variant="outlined"
+              label="Enter order No"
+              placeholder="Enter order number"
+              onChange={(event) => {
+                setCashOrderNo(event.target.value);
+                console.log(cashOrderNo);
+              }}
+            />
+            <SearchIcon
+              className="search_icon"
+              size="large"
+              onClick={() => {
+                console.log(cashOrderNo);
+                setReceiptOrderCashDialog(true);
+              }}
+            />
+            {receiptOrderCashDialog ? <HandleOrderCash /> : null}
+          </div>
         </div>
 
         {console.log("in bottom renderig")}
@@ -418,6 +494,13 @@ function HomePage() {
           <div className="homePage_bottomContain_productSection">
             <div className="homePage_bottomContain_productSection_headerDiv">
               <div className="homePage_bottomContain_productSection_header">
+                <div style={{
+                  marginRight:"7px",
+                  marginLeft:"16px",
+                  textAlign: "center",
+  fontWeight: "700",
+  opacity: "60%",
+                }} >Sr.</div>
                 <div className="homePage_bottomContain_productSection_image">
                   Image
                 </div>
@@ -457,7 +540,23 @@ function HomePage() {
                 onClick={clearAllCart}
                 className="homePage_bottomContain_productSection_clearAll"
               >
-                CLEAR ALL
+                {cartItems.length > 0 ? (
+                  <button
+                    style={{
+                      width: "100px",
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      backgroundColor: "#de751f",
+                      color: "white",
+                      border: "0.5px solid gray",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {" "}
+                    CLEAR ALL
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
@@ -497,7 +596,7 @@ function HomePage() {
                     <h5>Tax</h5>
                   </div>
                   <div className="checkoutSection_taxNumber">
-                    <h5 className="rupees">Rs. 50</h5>
+                    <h5 className="rupees">7%</h5>
                   </div>
                 </div>
                 <div className="checkoutSection_line"></div>
@@ -537,12 +636,12 @@ function HomePage() {
                   />
                 </div>
               </div> */}
-              <div className="checkoutSection_paymentMethodDiv">
+              {/* <div className="checkoutSection_paymentMethodDiv">
                 <div className="checkoutSection_paymentMethodHeader">
                   Payment Method
-                </div>
-                <div className="checkoutSection_paymentMethod_iconContain">
-                  <div
+                </div> */}
+             {/* //   <div className="checkoutSection_paymentMethod_iconContain"> */}
+                  {/* <div
                     className={
                       creditActive
                         ? "checkoutSection_paymentMethod_creditCard active"
@@ -560,9 +659,9 @@ function HomePage() {
                     <h5 className="checkoutSection_paymentMethod_text">
                       Credit Card
                     </h5>
-                  </div>
+                  </div> */}
                   {/* {creditActive ? <HandleCreditCard /> : null} */}
-                  <div
+                  {/* <div
                     className={
                       cashActive
                         ? "checkoutSection_paymentMethod_cash cashActive"
@@ -576,12 +675,12 @@ function HomePage() {
                   >
                     <BsCashStack className="checkoutSection_paymentMethod_icon" />
                     <h5 className="checkoutSection_paymentMethod_text">Cash</h5>
-                  </div>
+                  </div> */}
                   <div></div>
-                </div>
-              </div>
+                {/* </div> */}
+              {/* </div> */}
               <div className="checkoutSection_buttonDiv">
-                <Button className="checkoutSection_cancel" variant="contained">
+                <Button className="checkoutSection_cancel" variant="contained" onClick={clearAllCart}>
                   Cancel
                 </Button>
                 <Button
@@ -590,18 +689,14 @@ function HomePage() {
                   onClick={() => {
                     console.log("in line 197 after click " + openReceiptDialog);
                     createOrder();
-                    setOpenReceiptDialog(true);
+
                     // return(<HandleOrder/>)
                   }}
                 >
                   Pay
                 </Button>
                 {console.log("in handle order renderig")}
-                {openReceiptDialog ? (
-                 
-                    <HandleOrder />
-               
-                ) : null}
+                {openReceiptDialog ? <HandleOrder /> : null}
                 {/* <GetCartRedux setCartRedux={setCartRedux}/> */}
               </div>
             </div>
